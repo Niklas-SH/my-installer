@@ -1,30 +1,44 @@
-Write-Host "==============================" -ForegroundColor Cyan
-Write-Host "  SPICETIFY STYLE INSTALLER  " -ForegroundColor Green
-Write-Host "=============================="
+# DARK TERMINAL INSTALLER
+# Run via: irm URL | iex
 
-# Check if Spotify exists
-$spotifyPath = "$env:APPDATA\Spotify"
+$ErrorActionPreference = "Stop"
 
-if (!(Test-Path $spotifyPath)) {
-    Write-Host "Spotify not found! Please install Spotify first." -ForegroundColor Red
-    exit
-}
+$installDir = "$env:LOCALAPPDATA\DarkTerminal"
+$batPath = "$installDir\dark-terminal.bat"
 
-# Install Spicetify (official way)
-Write-Host "Installing Spicetify..." -ForegroundColor Yellow
-iwr -useb https://raw.githubusercontent.com/spicetify/spicetify-cli/main/install.ps1 | iex
+Write-Host "Installing DARK TERMINAL v3.0..." -ForegroundColor Green
 
-# Wait
-Start-Sleep -Seconds 2
+# Ordner erstellen
+New-Item -ItemType Directory -Path $installDir -Force | Out-Null
 
-# Apply Spicetify
-Write-Host "Applying Spicetify..." -ForegroundColor Yellow
-spicetify backup apply
+# Batch Script Inhalt (dein CMD Design)
+$batContent = @'
+@echo off
+chcp 65001 >nul
+setlocal EnableExtensions EnableDelayedExpansion
+title DARK TERMINAL v3.0 // NEIKI OS
+mode con: cols=120 lines=45
 
-# Install Marketplace (optional but cool)
-Write-Host "Installing Spicetify Marketplace..." -ForegroundColor Yellow
-iwr -useb https://raw.githubusercontent.com/spicetify/spicetify-marketplace/main/resources/install.ps1 | iex
+powershell -c "[console]::beep(300,80);Start-Sleep -Milliseconds 50;[console]::beep(500,80);Start-Sleep -Milliseconds 50;[console]::beep(700,120);Start-Sleep -Milliseconds 50;[console]::beep(900,150)" >nul
 
-Write-Host ""
-Write-Host "DONE! Restart Spotify 🎧" -ForegroundColor Green
-Write-Host ""
+cls
+echo DARK TERMINAL INSTALLED SUCCESSFULLY
+timeout /t 2 >nul
+start cmd /k "%~dp0dark-terminal.bat"
+'@
+
+# Datei schreiben
+Set-Content -Path $batPath -Value $batContent -Encoding UTF8
+
+# Optional Desktop Shortcut
+$shortcutPath = "$env:USERPROFILE\Desktop\Dark Terminal.lnk"
+$WshShell = New-Object -ComObject WScript.Shell
+$Shortcut = $WshShell.CreateShortcut($shortcutPath)
+$Shortcut.TargetPath = $batPath
+$Shortcut.WorkingDirectory = $installDir
+$Shortcut.Save()
+
+Write-Host "DONE!" -ForegroundColor Green
+Write-Host "Location: $batPath"
+Write-Host "Desktop Shortcut created."
+Write-Host "Run it anytime: Dark Terminal"
