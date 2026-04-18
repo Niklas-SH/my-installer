@@ -8,24 +8,22 @@ $batPath = "$installDir\dark-terminal.bat"
 # Ordner erstellen
 New-Item -ItemType Directory -Path $installDir -Force | Out-Null
 
-# BAT Datei herunterladen
+# BAT Datei laden
 Invoke-WebRequest `
   -Uri "https://raw.githubusercontent.com/Niklas-SH/my-installer/main/dark-terminal.bat" `
   -OutFile $batPath
 
-# Desktop sicher finden (FIX für OneDrive / Windows Varianten)
-$desktop = [Environment]::GetFolderPath("Desktop")
+Write-Host "Installed successfully!" -ForegroundColor Green
+Write-Host "Location: $batPath"
 
-if (-not (Test-Path $desktop)) {
-    $desktop = "$env:USERPROFILE\OneDrive\Desktop"
-}
-
-if (-not (Test-Path $desktop)) {
-    $desktop = "$env:USERPROFILE\Desktop"
-}
-
-# Shortcut erstellen (SAFE)
+# Desktop Shortcut (100% safe)
 try {
+    $desktop = [Environment]::GetFolderPath("Desktop")
+
+    if (-not (Test-Path $desktop)) {
+        $desktop = "$env:USERPROFILE\Desktop"
+    }
+
     $shortcutPath = Join-Path $desktop "Dark Terminal.lnk"
 
     $WshShell = New-Object -ComObject WScript.Shell
@@ -34,9 +32,7 @@ try {
     $Shortcut.WorkingDirectory = $installDir
     $Shortcut.Save()
 
-    Write-Host "Desktop shortcut created." -ForegroundColor Green
+    Write-Host "Shortcut created!" -ForegroundColor Green
 } catch {
-    Write-Host "Shortcut creation skipped (desktop not accessible)" -ForegroundColor Yellow
+    Write-Host "Shortcut skipped (no desktop access)" -ForegroundColor Yellow
 }
-
-Write-Host "DONE! Run Dark Terminal from Desktop or folder." -ForegroundColor Green
