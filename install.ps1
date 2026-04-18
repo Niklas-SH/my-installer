@@ -30,8 +30,9 @@ start cmd /k "%~dp0dark-terminal.bat"
 # Datei schreiben
 Set-Content -Path $batPath -Value $batContent -Encoding UTF8
 
-# Optional Desktop Shortcut
-$shortcutPath = "$env:USERPROFILE\Desktop\Dark Terminal.lnk"
+$desktop = [Environment]::GetFolderPath("Desktop")
+
+$shortcutPath = "$desktop\Dark Terminal.lnk"
 $WshShell = New-Object -ComObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut($shortcutPath)
 $Shortcut.TargetPath = $batPath
